@@ -1,0 +1,408 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Friendship Day</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #020208;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* MAIN CONTAINER FOR SPLIT / FLEX SCREEN EFFECT */
+        .content-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 3s ease-in-out;
+            pointer-events: none;
+        }
+
+        .content-container.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* LAYER 1: The Image Wrapper */
+        .image-wrapper {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: #020208;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform-origin: left center;
+            will-change: transform;
+            transition: transform 3s ease-in-out;
+            flex-shrink: 0;
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Desktop Shrink State */
+        .image-wrapper.shrunk {
+            transform: scaleX(0.5);
+        }
+
+        /* LAYER 4: Wish & Gratitude Message Box */
+        .message-box {
+            position: absolute;
+            right: 5%;
+            width: 40%;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37),
+                0 0 20px rgba(255, 0, 127, 0.2);
+            color: #ffffff;
+            opacity: 0;
+            transform: translateX(30px);
+            transition: opacity 2s ease, transform 2s ease;
+            z-index: 2;
+        }
+
+        .message-box.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .message-box h2 {
+            font-size: 2.2rem;
+            color: #ff75a0;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(255, 117, 160, 0.5);
+        }
+
+        .message-box p {
+            font-size: 1.15rem;
+            line-height: 1.7;
+            color: #e0e0e0;
+            margin-bottom: 15px;
+        }
+
+        .message-box .signature {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #ff75a0;
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        /* LAYER 2: Canvas Fireworks */
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            transition: opacity 2s ease;
+        }
+
+        /* LAYER 3: Countdown Timer */
+        #demo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            text-align: center;
+            font-size: 120px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            transition: opacity 0.5s ease;
+        }
+
+        .fade-out-intro {
+            opacity: 0 !important;
+            pointer-events: none;
+        }
+
+        /* ========================================================= */
+        /* MOBILE & TABLET MEDIA QUERIES (Screen width <= 768px)     */
+        /* ========================================================= */
+        @media screen and (max-width: 768px) {
+
+            /* Smaller Countdown on Mobile */
+            #demo {
+                font-size: 70px;
+            }
+
+            /* Stack layout vertically on phones */
+            .content-container {
+                flex-direction: column;
+                justify-content: flex-start;
+                overflow-y: auto;
+                /* Allows scrolling if message is long */
+            }
+
+            /* On mobile, shrink vertically to top half instead of left side */
+            .image-wrapper {
+                transform-origin: top center;
+                height: 100vh;
+            }
+
+            .image-wrapper.shrunk {
+                transform: scaleY(0.45) translateY(-20%);
+            }
+
+            /* Responsive Message Box for Mobile Screens */
+            .message-box {
+                position: absolute;
+                top: 48vh;
+                right: 0;
+                left: 0;
+                margin: 0 auto;
+                width: 90%;
+                max-height: 48vh;
+                overflow-y: auto;
+                padding: 22px;
+                transform: translateY(30px);
+            }
+
+            .message-box.show {
+                transform: translateY(0);
+            }
+
+            .message-box h2 {
+                font-size: 1.5rem;
+                margin-bottom: 10px;
+            }
+
+            .message-box p {
+                font-size: 0.95rem;
+                line-height: 1.5;
+                margin-bottom: 10px;
+            }
+
+            .message-box .signature {
+                font-size: 0.95rem;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Main Content Layer (Holds Card & Message) -->
+    <div id="contentContainer" class="content-container">
+        <div id="imageWrapper" class="image-wrapper">
+            <img src="Deekshitha-wish.png" alt="Happy Friendship Day Deekshitha">
+        </div>
+
+        <!-- Message Box -->
+        <div id="messageBox" class="message-box">
+            <h2>Mukku,</h2>
+            <p>Happy Friendship Day! ✨</p>
+            <p>No matter what happened or how quiet things are right now, nothing changes how much your friendship means
+                to me.</p>
+            <p>I’m truly sorry if I hurt you or made things difficult. Let’s talk
+                whenever you feel ready, okay?</p>
+            <div class="signature">Always here for you ❤️</div>
+        </div>
+    </div>
+
+    <!-- Intro Graphics Layers -->
+    <canvas id="fireworkCanvas"></canvas>
+    <p id="demo"></p>
+
+    <script>
+        // --- 1. Canvas Setup ---
+        const canvas = document.getElementById('fireworkCanvas');
+        const ctx = canvas.getContext('2d');
+        const countdownElement = document.getElementById('demo');
+        const contentContainer = document.getElementById('contentContainer');
+        const imageWrapper = document.getElementById('imageWrapper');
+        const messageBox = document.getElementById('messageBox');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        let rocket = null;
+        const particles = [];
+        const random = (min, max) => Math.random() * (max - min) + min;
+
+        // --- 2. Firework Logic Engine ---
+        class MainRocket {
+            constructor() {
+                this.x = canvas.width / 2;
+                this.y = canvas.height + 10;
+                this.targetY = canvas.height * 0.45;
+                this.speed = 10;
+                this.hue = 330; // Pure Electric Neon Magenta/Pink
+            }
+
+            update() {
+                this.y -= this.speed;
+                if (this.y <= this.targetY) {
+                    this.explode();
+                    return false;
+                }
+                return true;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = `hsl(${this.hue}, 100%, 60%)`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 5, 0, Math.PI * 2);
+                ctx.fillStyle = '#fff';
+                ctx.fill();
+                ctx.restore();
+            }
+
+            explode() {
+                // High particle count to scatter all over the screen
+                const particleCount = 750;
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push(new NeonParticle(this.x, this.y, this.hue));
+                }
+
+                // Step A: Start revealing image right as fireworks burst
+                setTimeout(() => {
+                    contentContainer.classList.add('active');
+
+                    // Fade out canvas smoothly after particles disperse
+                    setTimeout(() => {
+                        canvas.classList.add('fade-out-intro');
+                    }, 2500);
+
+                    // Step B: Wait 5 seconds after image appears, then shrink image & show message box
+                    setTimeout(() => {
+                        imageWrapper.classList.add('shrunk');
+
+                        // Reveal message box alongside shrinking animation
+                        setTimeout(() => {
+                            messageBox.classList.add('show');
+                        }, 1000);
+
+                    }, 5000); // <-- CHANGED FROM 3000 TO 5000 (5-second delay)
+
+                }, 300);
+            }
+        }
+
+        class NeonParticle {
+            constructor(x, y, baseHue) {
+                this.x = x;
+                this.y = y;
+                this.hue = baseHue + Math.floor(random(-60, 60));
+
+                const angle = random(0, Math.PI * 2);
+                const speed = random(6, 30);
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+
+                this.gravity = 0.03;
+                this.friction = 0.985;
+                this.alpha = 1;
+                this.decay = random(0.003, 0.008);
+            }
+
+            update() {
+                this.vx *= this.friction;
+                this.vy *= this.friction;
+                this.vy += this.gravity;
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= this.decay;
+            }
+
+            draw() {
+                if (this.alpha <= 0) return;
+
+                ctx.save();
+                ctx.globalCompositeOperation = 'screen';
+                ctx.shadowBlur = 14;
+                ctx.shadowColor = `hsl(${this.hue}, 100%, 55%)`;
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, random(1.5, 4), 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // Canvas Engine Runtime loop
+        function loop() {
+            ctx.fillStyle = 'rgba(2, 2, 8, 0.15)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            if (rocket) {
+                const isAlive = rocket.update();
+                if (isAlive) {
+                    rocket.draw();
+                } else {
+                    rocket = null;
+                }
+            }
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].alpha <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(loop);
+        }
+
+        loop();
+
+        // --- 3. Linked Countdown Script ---
+        var timeLeft = 10;
+        countdownElement.innerHTML = timeLeft;
+
+        var x = setInterval(function () {
+            timeLeft--;
+            countdownElement.innerHTML = timeLeft;
+
+            if (timeLeft <= 0) {
+                clearInterval(x);
+                countdownElement.style.opacity = 0;
+
+                setTimeout(() => {
+                    countdownElement.style.display = 'none';
+                    rocket = new MainRocket();
+                }, 300);
+            }
+        }, 1000);
+    </script>
+</body>
+
+</html>
